@@ -6,7 +6,7 @@
 # passes its ID to the module.
 # -----------------------------------------------------------------------------
 module "alert_policies" {
-  source = "../.."
+  source = "git::https://github.com/nurdsoft/terraform-google-alert-policies.git?ref=v1.0.0"
 
   notification_channels = var.notification_channels
   alert_services_regex  = var.alert_services_regex
