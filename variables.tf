@@ -94,3 +94,20 @@ variable "disk_duration" {
   type        = string
   default     = "0s"
 }
+
+# ---------------------------------------------------------------------------
+# Built-in policy toggle
+# ---------------------------------------------------------------------------
+
+variable "enable_built_in_policies" {
+  description = <<-EOT
+    Whether to create the four built-in Cloud Run + Cloud SQL alert policies.
+    Defaults to true (existing behavior). Set to false when the module is used
+    purely to provision policies via additional_alert_policies (e.g. from a
+    frontend edge module) — the six built-in display_name / regex inputs become
+    unused but are still validated as non-empty strings, so pass placeholder
+    strings if you must.
+  EOT
+  type        = bool
+  default     = true
+}

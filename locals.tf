@@ -1,5 +1,5 @@
 locals {
-  alert_policies = {
+  alert_policies = var.enable_built_in_policies ? {
     cloud_run_high_traffic = {
       display_name    = var.high_request_alert_display_name
       condition_name  = "Cloud Run - Request Rate"
@@ -47,5 +47,5 @@ locals {
       reducer         = null
       group_by_fields = ["resource.labels.database_id"]
     }
-  }
+  } : {}
 }
