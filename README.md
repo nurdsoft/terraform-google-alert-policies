@@ -121,7 +121,7 @@ The module provisions the following 4 alert policies:
 
 ## Extending with additional policies
 
-Set `enable_built_in_policies = false` to skip the four built-in Cloud Run + Cloud SQL policies, and pass your own via `additional_alert_policies`. See [`examples/frontend`](./examples/frontend) for a working example that provisions two frontend LB / uptime-check policies.
+Set `enable_built_in_policies = false` to skip the four built-in Cloud Run + Cloud SQL policies, and pass your own via `additional_alert_policies`.
 
 ### `additional_alert_policies` schema
 
@@ -147,7 +147,6 @@ Each entry is an object with the following fields (required unless marked option
 | Example | Description |
 |---|---|
 | [simple](./examples/simple) | Create alert policies for Cloud Run and Cloud SQL monitoring |
-| [frontend](./examples/frontend) | Create additional_alert_policies for a frontend LB stack (built-ins disabled) |
 
 ## Requirements
 
