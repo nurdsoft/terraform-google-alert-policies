@@ -111,3 +111,43 @@ variable "enable_built_in_policies" {
   type        = bool
   default     = true
 }
+
+# ---------------------------------------------------------------------------
+# Additional alert policies (opt-in)
+# ---------------------------------------------------------------------------
+
+variable "additional_alert_policies" {
+  description = <<-EOT
+    Additional alert policies keyed by unique name. Each entry becomes its own
+    google_monitoring_alert_policy instance. Keys must not collide with the
+    built-in keys: cloud_run_high_traffic, cloud_run_error_alert,
+    cloud_sql_cpu_alert, cloud_sql_disk_alert.
+  EOT
+  type = map(object({
+    display_name    = string
+    condition_name  = string
+    severity        = string
+    filter          = string
+    threshold_value = number
+    duration        = string
+
+    aligner         = optional(string)
+    comparison      = optional(string, "COMPARISON_GT")
+    reducer         = optional(string)
+    group_by_fields = optional(list(string), [])
+    trigger_count   = optional(number)
+    project         = optional(string)
+    user_labels     = optional(map(string))
+
+    documentation = optional(object({
+      content   = string
+      mime_type = optional(string, "text/markdown")
+    }))
+  }))
+  default = {}
+
+  validation {
+    condition     = length(setintersection(keys(var.additional_alert_policies), ["cloud_run_high_traffic", "cloud_run_error_alert", "cloud_sql_cpu_alert", "cloud_sql_disk_alert"])) == 0
+    error_message = "additional_alert_policies keys must not collide with built-in policy keys."
+  }
+}
