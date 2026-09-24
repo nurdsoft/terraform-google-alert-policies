@@ -119,11 +119,35 @@ The module provisions the following 4 alert policies:
 | 3 | CPU Utilization | Cloud SQL | CPU utilization exceeds threshold | WARNING | > 75% |
 | 4 | Disk Utilization | Cloud SQL | Disk utilization exceeds threshold | WARNING | > 50% |
 
+## Extending with additional policies
+
+Set `enable_built_in_policies = false` to skip the four built-in Cloud Run + Cloud SQL policies, and pass your own via `additional_alert_policies`. See [`examples/frontend`](./examples/frontend) for a working example that provisions two frontend LB / uptime-check policies.
+
+### `additional_alert_policies` schema
+
+Each entry is an object with the following fields (required unless marked optional):
+
+- `display_name` (string) — the policy's display name in GCP.
+- `condition_name` (string) — the condition block's display name.
+- `severity` (string) — one of `WARNING`, `ERROR`, `CRITICAL`.
+- `filter` (string) — the metric filter (Cloud Monitoring MQL/legacy).
+- `threshold_value` (number) — the numeric threshold.
+- `duration` (string) — e.g. `"60s"`.
+- `aligner` (optional string) — `per_series_aligner`. `null` omits the field.
+- `comparison` (optional string) — default `"COMPARISON_GT"`.
+- `reducer` (optional string) — `cross_series_reducer`. `null` omits the field.
+- `group_by_fields` (optional list(string)) — default `[]`.
+- `trigger_count` (optional number) — sets `trigger { count = … }`. `null` omits the block.
+- `project` (optional string) — overrides the provider project. `null` uses the provider default.
+- `user_labels` (optional map(string)) — labels applied to the resource.
+- `documentation` (optional object) — `{ content, mime_type = "text/markdown" }`. `null` omits the block.
+
 ## Examples
 
 | Example | Description |
 |---|---|
 | [simple](./examples/simple) | Create alert policies for Cloud Run and Cloud SQL monitoring |
+| [frontend](./examples/frontend) | Create additional_alert_policies for a frontend LB stack (built-ins disabled) |
 
 ## Requirements
 
@@ -163,6 +187,8 @@ The module provisions the following 4 alert policies:
 | `cpu_duration` | Duration for CPU threshold | `string` | `"0s"` | no |
 | `disk_threshold` | Disk utilization threshold (0.0-1.0) | `number` | `0.50` | no |
 | `disk_duration` | Duration for disk threshold | `string` | `"0s"` | no |
+| `enable_built_in_policies` | Whether to create the four built-in Cloud Run + Cloud SQL policies | `bool` | `true` | no |
+| `additional_alert_policies` | Additional alert policies keyed by unique name (see [schema](#additional_alert_policies-schema)) | `map(object)` | `{}` | no |
 
 ## Outputs
 
@@ -170,6 +196,8 @@ The module provisions the following 4 alert policies:
 |---|---|
 | `alert_policy_ids` | Map of alert policy keys to their GCP resource IDs |
 | `alert_policy_names` | Map of alert policy keys to their GCP resource names |
+| `additional_alert_policy_ids` | Map of additional alert policy keys to their GCP resource IDs |
+| `additional_alert_policy_names` | Map of additional alert policy keys to their GCP resource names |
 
 ### Alert Policy Output Keys
 
