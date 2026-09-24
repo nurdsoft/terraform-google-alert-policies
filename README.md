@@ -169,16 +169,16 @@ Each entry is an object with the following fields (required unless marked option
 | Name | Description | Type | Default | Required |
 |---|---|---|---|---|
 | `notification_channels` | List of notification channel IDs to send alerts to | `list(string)` | n/a | yes |
-| `alert_services_regex` | Regex pattern to match Cloud Run service names | `string` | n/a | yes |
-| `high_request_alert_display_name` | Display name for Cloud Run high traffic alert | `string` | n/a | yes |
-| `error_alert_display_name` | Display name for Cloud Run error alert | `string` | n/a | yes |
-| `cpu_alert_display_name` | Display name for Cloud SQL CPU alert | `string` | n/a | yes |
-| `disk_alert_display_name` | Display name for Cloud SQL disk alert | `string` | n/a | yes |
 
 ### Optional
 
 | Name | Description | Type | Default | Required |
 |---|---|---|---|---|
+| `alert_services_regex` | Regex pattern to match Cloud Run service names (unused when `enable_built_in_policies = false`) | `string` | `""` | no |
+| `high_request_alert_display_name` | Display name for Cloud Run high traffic alert (unused when `enable_built_in_policies = false`) | `string` | `""` | no |
+| `error_alert_display_name` | Display name for Cloud Run error alert (unused when `enable_built_in_policies = false`) | `string` | `""` | no |
+| `cpu_alert_display_name` | Display name for Cloud SQL CPU alert (unused when `enable_built_in_policies = false`) | `string` | `""` | no |
+| `disk_alert_display_name` | Display name for Cloud SQL disk alert (unused when `enable_built_in_policies = false`) | `string` | `""` | no |
 | `high_request_threshold` | Request rate threshold in requests per second | `number` | `10` | no |
 | `high_request_duration` | Duration for high request threshold | `string` | `"60s"` | no |
 | `error_threshold` | Error count threshold | `number` | `1` | no |

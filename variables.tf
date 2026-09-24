@@ -6,8 +6,9 @@ variable "notification_channels" {
 }
 
 variable "alert_services_regex" {
-  description = "Regex used to match Cloud Run service names."
+  description = "Regex used to match Cloud Run service names. Unused when enable_built_in_policies is false."
   type        = string
+  default     = ""
 }
 
 # ---------------------------------------------------------------------------
@@ -15,8 +16,9 @@ variable "alert_services_regex" {
 # ---------------------------------------------------------------------------
 
 variable "high_request_alert_display_name" {
-  description = "Display name for Cloud Run high traffic alert."
+  description = "Display name for Cloud Run high traffic alert. Unused when enable_built_in_policies is false."
   type        = string
+  default     = ""
 }
 
 variable "high_request_threshold" {
@@ -37,8 +39,9 @@ variable "high_request_duration" {
 # ---------------------------------------------------------------------------
 
 variable "error_alert_display_name" {
-  description = "Display name for Cloud Run error alert."
+  description = "Display name for Cloud Run error alert. Unused when enable_built_in_policies is false."
   type        = string
+  default     = ""
 }
 
 variable "error_threshold" {
@@ -58,8 +61,9 @@ variable "error_duration" {
 # ---------------------------------------------------------------------------
 
 variable "cpu_alert_display_name" {
-  description = "Display name for Cloud SQL CPU alert."
+  description = "Display name for Cloud SQL CPU alert. Unused when enable_built_in_policies is false."
   type        = string
+  default     = ""
 }
 
 variable "cpu_threshold" {
@@ -79,8 +83,9 @@ variable "cpu_duration" {
 # ---------------------------------------------------------------------------
 
 variable "disk_alert_display_name" {
-  description = "Display name for Cloud SQL disk alert."
+  description = "Display name for Cloud SQL disk alert. Unused when enable_built_in_policies is false."
   type        = string
+  default     = ""
 }
 
 variable "disk_threshold" {

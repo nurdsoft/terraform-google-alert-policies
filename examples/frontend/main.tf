@@ -11,12 +11,6 @@ module "alert_policies" {
   enable_built_in_policies = false
   notification_channels    = var.notification_channels
 
-  alert_services_regex            = ""
-  high_request_alert_display_name = ""
-  error_alert_display_name        = ""
-  cpu_alert_display_name          = ""
-  disk_alert_display_name         = ""
-
   additional_alert_policies = {
     http_5xx_error_rate = {
       display_name    = "${var.component}-http-5xx-error-rate"
