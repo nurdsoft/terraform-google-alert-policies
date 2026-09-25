@@ -119,6 +119,29 @@ The module provisions the following 4 alert policies:
 | 3 | CPU Utilization | Cloud SQL | CPU utilization exceeds threshold | WARNING | > 75% |
 | 4 | Disk Utilization | Cloud SQL | Disk utilization exceeds threshold | WARNING | > 50% |
 
+## Extending with additional policies
+
+Set `enable_built_in_policies = false` to skip the four built-in Cloud Run + Cloud SQL policies, and pass your own via `additional_alert_policies`.
+
+### `additional_alert_policies` schema
+
+Each entry is an object with the following fields (required unless marked optional):
+
+- `display_name` (string) — the policy's display name in GCP.
+- `condition_name` (string) — the condition block's display name.
+- `severity` (string) — one of `WARNING`, `ERROR`, `CRITICAL`.
+- `filter` (string) — the metric filter (Cloud Monitoring MQL/legacy).
+- `threshold_value` (number) — the numeric threshold.
+- `duration` (string) — e.g. `"60s"`.
+- `aligner` (optional string) — `per_series_aligner`. `null` omits the field.
+- `comparison` (optional string) — default `"COMPARISON_GT"`.
+- `reducer` (optional string) — `cross_series_reducer`. `null` omits the field.
+- `group_by_fields` (optional list(string)) — default `[]`.
+- `trigger_count` (optional number) — sets `trigger { count = … }`. `null` omits the block.
+- `project` (optional string) — overrides the provider project. `null` uses the provider default.
+- `user_labels` (optional map(string)) — labels applied to the resource.
+- `documentation` (optional object) — `{ content, mime_type = "text/markdown" }`. `null` omits the block.
+
 ## Examples
 
 | Example | Description |
@@ -145,16 +168,16 @@ The module provisions the following 4 alert policies:
 | Name | Description | Type | Default | Required |
 |---|---|---|---|---|
 | `notification_channels` | List of notification channel IDs to send alerts to | `list(string)` | n/a | yes |
-| `alert_services_regex` | Regex pattern to match Cloud Run service names | `string` | n/a | yes |
-| `high_request_alert_display_name` | Display name for Cloud Run high traffic alert | `string` | n/a | yes |
-| `error_alert_display_name` | Display name for Cloud Run error alert | `string` | n/a | yes |
-| `cpu_alert_display_name` | Display name for Cloud SQL CPU alert | `string` | n/a | yes |
-| `disk_alert_display_name` | Display name for Cloud SQL disk alert | `string` | n/a | yes |
 
 ### Optional
 
 | Name | Description | Type | Default | Required |
 |---|---|---|---|---|
+| `alert_services_regex` | Regex pattern to match Cloud Run service names (unused when `enable_built_in_policies = false`) | `string` | `""` | no |
+| `high_request_alert_display_name` | Display name for Cloud Run high traffic alert (unused when `enable_built_in_policies = false`) | `string` | `""` | no |
+| `error_alert_display_name` | Display name for Cloud Run error alert (unused when `enable_built_in_policies = false`) | `string` | `""` | no |
+| `cpu_alert_display_name` | Display name for Cloud SQL CPU alert (unused when `enable_built_in_policies = false`) | `string` | `""` | no |
+| `disk_alert_display_name` | Display name for Cloud SQL disk alert (unused when `enable_built_in_policies = false`) | `string` | `""` | no |
 | `high_request_threshold` | Request rate threshold in requests per second | `number` | `10` | no |
 | `high_request_duration` | Duration for high request threshold | `string` | `"60s"` | no |
 | `error_threshold` | Error count threshold | `number` | `1` | no |
@@ -163,6 +186,8 @@ The module provisions the following 4 alert policies:
 | `cpu_duration` | Duration for CPU threshold | `string` | `"0s"` | no |
 | `disk_threshold` | Disk utilization threshold (0.0-1.0) | `number` | `0.50` | no |
 | `disk_duration` | Duration for disk threshold | `string` | `"0s"` | no |
+| `enable_built_in_policies` | Whether to create the four built-in Cloud Run + Cloud SQL policies | `bool` | `true` | no |
+| `additional_alert_policies` | Additional alert policies keyed by unique name (see [schema](#additional_alert_policies-schema)) | `map(object)` | `{}` | no |
 
 ## Outputs
 
@@ -170,6 +195,8 @@ The module provisions the following 4 alert policies:
 |---|---|
 | `alert_policy_ids` | Map of alert policy keys to their GCP resource IDs |
 | `alert_policy_names` | Map of alert policy keys to their GCP resource names |
+| `additional_alert_policy_ids` | Map of additional alert policy keys to their GCP resource IDs |
+| `additional_alert_policy_names` | Map of additional alert policy keys to their GCP resource names |
 
 ### Alert Policy Output Keys
 

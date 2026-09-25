@@ -6,8 +6,9 @@ variable "notification_channels" {
 }
 
 variable "alert_services_regex" {
-  description = "Regex used to match Cloud Run service names."
+  description = "Regex used to match Cloud Run service names. Unused when enable_built_in_policies is false."
   type        = string
+  default     = ""
 }
 
 # ---------------------------------------------------------------------------
@@ -15,8 +16,9 @@ variable "alert_services_regex" {
 # ---------------------------------------------------------------------------
 
 variable "high_request_alert_display_name" {
-  description = "Display name for Cloud Run high traffic alert."
+  description = "Display name for Cloud Run high traffic alert. Unused when enable_built_in_policies is false."
   type        = string
+  default     = ""
 }
 
 variable "high_request_threshold" {
@@ -37,8 +39,9 @@ variable "high_request_duration" {
 # ---------------------------------------------------------------------------
 
 variable "error_alert_display_name" {
-  description = "Display name for Cloud Run error alert."
+  description = "Display name for Cloud Run error alert. Unused when enable_built_in_policies is false."
   type        = string
+  default     = ""
 }
 
 variable "error_threshold" {
@@ -58,8 +61,9 @@ variable "error_duration" {
 # ---------------------------------------------------------------------------
 
 variable "cpu_alert_display_name" {
-  description = "Display name for Cloud SQL CPU alert."
+  description = "Display name for Cloud SQL CPU alert. Unused when enable_built_in_policies is false."
   type        = string
+  default     = ""
 }
 
 variable "cpu_threshold" {
@@ -79,8 +83,9 @@ variable "cpu_duration" {
 # ---------------------------------------------------------------------------
 
 variable "disk_alert_display_name" {
-  description = "Display name for Cloud SQL disk alert."
+  description = "Display name for Cloud SQL disk alert. Unused when enable_built_in_policies is false."
   type        = string
+  default     = ""
 }
 
 variable "disk_threshold" {
@@ -93,4 +98,61 @@ variable "disk_duration" {
   description = "Duration for disk threshold."
   type        = string
   default     = "0s"
+}
+
+# ---------------------------------------------------------------------------
+# Built-in policy toggle
+# ---------------------------------------------------------------------------
+
+variable "enable_built_in_policies" {
+  description = <<-EOT
+    Whether to create the four built-in Cloud Run + Cloud SQL alert policies.
+    Defaults to true (existing behavior). Set to false when the module is used
+    purely to provision policies via additional_alert_policies (e.g. from a
+    frontend edge module) — the six built-in display_name / regex inputs become
+    unused but are still validated as non-empty strings, so pass placeholder
+    strings if you must.
+  EOT
+  type        = bool
+  default     = true
+}
+
+# ---------------------------------------------------------------------------
+# Additional alert policies (opt-in)
+# ---------------------------------------------------------------------------
+
+variable "additional_alert_policies" {
+  description = <<-EOT
+    Additional alert policies keyed by unique name. Each entry becomes its own
+    google_monitoring_alert_policy instance. Keys must not collide with the
+    built-in keys: cloud_run_high_traffic, cloud_run_error_alert,
+    cloud_sql_cpu_alert, cloud_sql_disk_alert.
+  EOT
+  type = map(object({
+    display_name    = string
+    condition_name  = string
+    severity        = string
+    filter          = string
+    threshold_value = number
+    duration        = string
+
+    aligner         = optional(string)
+    comparison      = optional(string, "COMPARISON_GT")
+    reducer         = optional(string)
+    group_by_fields = optional(list(string), [])
+    trigger_count   = optional(number)
+    project         = optional(string)
+    user_labels     = optional(map(string))
+
+    documentation = optional(object({
+      content   = string
+      mime_type = optional(string, "text/markdown")
+    }))
+  }))
+  default = {}
+
+  validation {
+    condition     = length(setintersection(keys(var.additional_alert_policies), ["cloud_run_high_traffic", "cloud_run_error_alert", "cloud_sql_cpu_alert", "cloud_sql_disk_alert"])) == 0
+    error_message = "additional_alert_policies keys must not collide with built-in policy keys."
+  }
 }
